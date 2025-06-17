@@ -49,3 +49,14 @@ h1 {
   letter-spacing: 0.2rem;
   text-transform: uppercase;
 }
+
+#meals {
+  width: 90%;
+  max-width: 70rem;
+  list-style: none;
+  margin: 2rem auto;
+  padding: 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  gap: 1rem;
+}
