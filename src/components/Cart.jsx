@@ -4,6 +4,7 @@ import CartContext from '../store/CartContext'
 import { currencyFormatter } from '../Util/formatting'
 import Button from './UI/Button'
 import  {UserProgressContext } from '../store/UserProgressContext'
+import CartItem from './CartItem'
 
 const Cart = () => {
     const cartCtx = useContext(CartContext);
@@ -19,9 +20,9 @@ const Cart = () => {
     <Modal classname='cart' open={userProgressCtx.progress === 'cart'}>
         <h2>Your Cart</h2>
         <ul>
-            {cartCtx.items.map(item => <li key={item.id}>
-                {item.name} - {item.quantiy}
-            </li>)}
+            {cartCtx.items.map((item) => (
+            <CartItem key={item.id} {...item} onIncrease={() => cartCtx.addItem(item)} onDecrease={() => cartCtx.removeItem(id)}/>
+            ))}
         </ul>
         <p className='cart-total'>{currencyFormatter.format(cartTotal)}</p>
         <p className='modal-actions'>
