@@ -16,6 +16,10 @@ const Cart = () => {
         userProgressCtx.hideCart();
     }
 
+      function goCheckout() {
+         userProgressCtx.showCheckout();
+    }
+
   return (
     <Modal classname='cart' open={userProgressCtx.progress === 'cart'}>
         <h2>Your Cart</h2>
@@ -27,7 +31,7 @@ const Cart = () => {
         <p className='cart-total'>{currencyFormatter.format(cartTotal)}</p>
         <p className='modal-actions'>
             <Button textOnly onClick={handleCloseCart}>Close</Button>
-            <Button>Go to checkout</Button>
+            {cartCtx.items.length > 0 && <Button onClick={goCheckout}>Go to checkout</Button> }
         </p>
     </Modal>
   )
