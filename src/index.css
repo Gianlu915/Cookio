@@ -249,4 +249,18 @@ h1 {
   gap: 1rem;
 }
 
+.center {
+  display: flex;
+  justify-content: center; 
+  align-items: center;     
+}
+
+.error {
+  background-color: rgb(255, 115, 115);
+  border-radius: 3px;
+  padding: 1rem 2rem;
+  width: fit-content;
+  display: inline-flex;
+}
+
 
