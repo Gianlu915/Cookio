@@ -6,7 +6,7 @@ async function sendHttpRequest(url, config) {
     const resData = await response.json();
 
     if (!response.ok) {
-        throw new Error(resData.message || 'Something went wrong, failede to send request')
+        throw new Error(resData.message || 'Something went wrong, failed to send request')
     }
 
     return resData;
@@ -17,13 +17,22 @@ export default function useHttp(url, config, initialData) {
     const [isLoading, setIsLoading] = useState(false);
     const [error,setError] = useState();
 
-    const sendRequest = useCallback(async function sendRequest() {
+    function clearData() {
+        setData(initialData);
+    }
+
+    const sendRequest = useCallback(async function sendRequest(data) {
         setIsLoading(true);
         try {
-            const resData = await sendHttpRequest(url, config);
+            const fetchConfig = {
+            ...config,
+            ...(data ? { body: data } : {})
+            };
+
+        const resData = await sendHttpRequest(url, fetchConfig);
             setData(resData)
         } catch (error) {
-            setError(error.message || 'Somenthing went wrong')
+            setError(error || 'Something went wrong')
         }
         setIsLoading(false);
     },[url, config]);
@@ -39,6 +48,7 @@ export default function useHttp(url, config, initialData) {
         data,
         isLoading,
         error,
-        sendRequest
+        sendRequest,
+        clearData,
     };
 }

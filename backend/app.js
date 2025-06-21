@@ -1,19 +1,22 @@
+import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
 import fs from 'node:fs/promises';
 
-import bodyParser from 'body-parser';
-import express from 'express';
-
 const app = express();
+
+app.use(cors({
+  origin: 'http://localhost:5173',
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type'],
+}));
 
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  next();
-});
+
+app.options('*', cors());
+
 
 app.get('/meals', async (req, res) => {
   const meals = await fs.readFile('./data/available-meals.json', 'utf8');
@@ -21,24 +24,25 @@ app.get('/meals', async (req, res) => {
 });
 
 app.post('/orders', async (req, res) => {
+  console.log('POST /orders body:', req.body);
+
   const orderData = req.body.order;
 
-  if (orderData === null || orderData.items === null || orderData.items.length === 0) {
-    return res
-      .status(400)
-      .json({ message: 'Missing data.' });
+  if (!orderData || !orderData.items || orderData.items.length === 0) {
+    return res.status(400).json({ message: 'Missing data.' });
   }
 
+
   if (
-    orderData.customer.email === null ||
+    !orderData.customer.email ||
     !orderData.customer.email.includes('@') ||
-    orderData.customer.name === null ||
+    !orderData.customer.name ||
     orderData.customer.name.trim() === '' ||
-    orderData.customer.street === null ||
+    !orderData.customer.street ||
     orderData.customer.street.trim() === '' ||
-    orderData.customer['postal-code'] === null ||
+    !orderData.customer['postal-code'] ||
     orderData.customer['postal-code'].trim() === '' ||
-    orderData.customer.city === null ||
+    !orderData.customer.city ||
     orderData.customer.city.trim() === ''
   ) {
     return res.status(400).json({
@@ -59,11 +63,9 @@ app.post('/orders', async (req, res) => {
 });
 
 app.use((req, res) => {
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(200);
-  }
-
   res.status(404).json({ message: 'Not found' });
 });
 
-app.listen(3000);
+app.listen(3000, () => {
+  console.log('Server running on port 3000');
+});
